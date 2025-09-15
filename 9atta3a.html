@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قطاعة الخضروات الحلزونية - أداة المطبخ الذكية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap');
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .product-shadow {
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .order-form {
+            background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+        }
+        
+        .success-page {
+            display: none;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+        }
+        
+        .loading {
+            display: none;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+        
+        .modal-content {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 800px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: #bbb;
+        }
+
+        /* تحسينات الفيديو */
+        .video-placeholder {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 12px;
+        }
+        
+        .video-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            transition: background 0.3s ease;
+        }
+        
+        .video-placeholder:hover::before {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+        
+        .play-button:hover {
+            background: #fff;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .play-button i {
+            color: #ff6d00;
+            font-size: 24px;
+            margin-left: 4px;
+        }
+        
+        .video-title {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: white;
+            z-index: 2;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Hero Section -->
+    <div class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">قطاعة الخضروات الحلزونية</h1>
+            <p class="text-xl md:text-2xl mb-8 opacity-90">تقطيعك صار أسهل وأسرع</p>
+            
+            <!-- Product Gallery -->
+            <div class="max-w-6xl mx-auto mb-8">
+                <!-- Main Product Image -->
+                <div class="product-shadow rounded-2xl bg-white p-4 max-w-2xl mx-auto">
+                    <img id="mainImage" src="https://media.taager.com/ea236779-e8b9-46cd-ab66-75498840db35.jpg" 
+                    alt="قطاعة الخضروات الحلزونية" 
+                    class="w-full max-h-[450px] object-contain rounded-xl mx-auto">
+                </div>
+
+                <!-- Thumbnail Gallery -->
+				<div class="grid grid-cols-3 md:grid-cols-5 gap-4 mb-8 max-w-4xl mx-auto">
+                    <img onclick="changeMainImage(this.src)" src="https://media.taager.com/ea236779-e8b9-46cd-ab66-75498840db35.jpg" alt="المنتج الرئيسي" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-blue-500 hover:border-blue-700 transition-all shadow-lg">
+					<img onclick="changeMainImage(this.src)" src="https://media.taager.com/ee619ed8-df9d-4613-af6f-214170c42d0d.jpg" alt="المنتج الرئيسي" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-blue-500 hover:border-blue-700 transition-all shadow-lg">
+                    <img onclick="changeMainImage(this.src)" src="https://media.taager.com/de8e5491-f34d-413f-ba52-dc1be01d85cf.jpg" alt="تقطيع الجزر" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+                    <img onclick="changeMainImage(this.src)" src="https://media.taager.com/4c7e3101-0172-4cd3-983f-3cc8e4a23828.jpg" alt="خضروات حلزونية" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+                    <img onclick="changeMainImage(this.src)" src="https://media.taager.com/002e9afe-0e77-471d-a5d0-70a693dc38d5.jpg" alt="سلطة صحية" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+                    <img onclick="changeMainImage(this.src)" src="https://media.taager.com/4e97e814-9c1b-45d1-b4f6-c496fdc30179.jpg" alt="مكونات المنتج" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+					<img onclick="changeMainImage(this.src)" src="https://media.taager.com/3d8b03e7-8b77-44dc-83c2-6bf83f23f824.jpg" alt="مكونات المنتج" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+					<img onclick="changeMainImage(this.src)" src="https://media.taager.com/89ec6da9-bc71-428b-a0f0-e1fe76277203.jpg" alt="مكونات المنتج" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+					<img onclick="changeMainImage(this.src)" src="https://media.taager.com/15cb7752-b51f-4c0e-a2fd-949f32c27f7f.jpg" alt="مكونات المنتج" class="w-full h-24 md:h-28 object-cover rounded-lg cursor-pointer border-3 border-transparent hover:border-blue-500 transition-all shadow-lg">
+                </div>
+                
+                <!-- Video Gallery Button -->
+                <div class="text-center">
+                    <button onclick="openVideoGallery()" class="bg-red-600 text-white px-6 py-3 rounded-full font-bold hover:bg-red-700 transition-all duration-300 shadow-lg">
+                        🎥 شاهد المنتج يعمل - فيديو توضيحي
+                    </button>
+                </div>
+            </div>
+            
+            <div class="pulse-animation inline-block">
+                <button onclick="scrollToOrder()" class="bg-yellow-400 text-gray-900 px-8 py-4 rounded-full text-xl font-bold hover:bg-yellow-300 transition-all duration-300 shadow-lg">
+                    اطلب الآن - عرض خاص! 🔥
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">ليش هالأداة ضرورية في مطبخك؟</h2>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="feature-card bg-gradient-to-br from-blue-50 to-blue-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">🥕</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">تقطيع متعدد الأشكال</h3>
+                    <p class="text-gray-600">7 شفرات مختلفة لتقطيع الجزر والكوسة والفجل بأشكال حلزونية جميلة</p>
+                </div>
+                
+                <div class="feature-card bg-gradient-to-br from-green-50 to-green-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">🍽️</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">مناسبة للدايت</h3>
+                    <p class="text-gray-600">مناسبة للوجبات الصحية اليومية وتحضير السلطات بطريقة سهلة</p>
+                </div>
+                
+                <div class="feature-card bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">🔧</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">سهولة الاستخدام</h3>
+                    <p class="text-gray-600">قاعدة شفط للتثبيت وتفكيك سهل للتنظيف في غسالة الصحون</p>
+                </div>
+                
+                <div class="feature-card bg-gradient-to-br from-yellow-50 to-yellow-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">📦</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">عبوة كاملة</h3>
+                    <p class="text-gray-600">تأتي مع حاوية بلاستيك محكمة وفرشاة تنظيف خاصة</p>
+                </div>
+                
+                <div class="feature-card bg-gradient-to-br from-red-50 to-red-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">💪</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">مصممة بجودة</h3>
+                    <p class="text-gray-600">مصنوعة من بلاستيك قوي وستيل مقاوم للصدأ وخالية من BPA</p>
+                </div>
+                
+                <div class="feature-card bg-gradient-to-br from-indigo-50 to-indigo-100 p-6 rounded-xl">
+                    <div class="text-4xl mb-4">📏</div>
+                    <h3 class="text-xl font-bold mb-3 text-gray-800">تصميم عملي</h3>
+                    <p class="text-gray-600">خفيفة الوزن (1.5 كجم) وسهلة التخزين في أي مكان</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Demo Section -->
+    
+
+    <!-- Product Details -->
+    <div class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">تفاصيل المنتج</h2>
+                
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 text-blue-600">المواصفات التقنية</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li><strong>الماركة:</strong> جينريك</li>
+                            <li><strong>المادة:</strong> بلاستيك + ستانلس ستيل</li>
+                            <li><strong>الأبعاد:</strong> 26.9 × 11.9 × 18.8 سم</li>
+                            <li><strong>الوزن:</strong> 1.5 كجم</li>
+                            <li><strong>الضمان:</strong> 14 يوم</li>
+                            <li><strong>وكيل الضمان:</strong> دوزن</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 text-green-600">محتويات العبوة</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>✅ أداة تقطيع خضروات حلزونية</li>
+                            <li>✅ 5 شفرات تقطيع بأشكال مختلفة</li>
+                            <li>✅ حاوية بلاستيك بغطاء محكم</li>
+                            <li>✅ فرشاة تنظيف خاصة</li>
+                            <li>✅ دليل الاستخدام</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Form Section -->
+    <div id="orderSection" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto">
+                <div id="orderForm" class="order-form p-8 rounded-2xl shadow-2xl">
+                    <!--<h2 class="text-3xl font-bold text-center mb-8 text-gray-800">اطلب الآن واحصل على عرض خاص!</h2>-->
+					
+					<div class="text-center mb-6">
+                        <h2 class="text-3xl font-bold text-amber-900 mb-2">🛒 اطلب الحين</h2>
+                        <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white p-4 rounded-xl mb-4">
+                            <div class="text-2xl font-black">عرض خاص: 129 ريال بس!</div>
+                            <!--<div class="text-sm">بدلاً من 319 ريال - وفري 160 ريال</div>-->
+							<div class="text-white-600 font-semibold">✅ توصيل لجميع مناطق المملكة</div>
+                        </div>
+                        
+                    </div>
+                    
+                    <form id="productOrderForm" class="space-y-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">الاسم الكامل *</label>
+                                <input type="text" id="fullName" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">رقم الجوال *</label>
+                                <input type="tel" id="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="05xxxxxxxx">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">البريد الإلكتروني (اختياري)</label>
+                            <input type="email" id="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="example@email.com">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">المنطقة *</label>
+                            <select id="region" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">اختر المنطقة</option>
+                                <option value="الرياض">الرياض</option>
+                                <option value="جدة">جدة</option>
+                                <option value="الدمام">الدمام</option>
+                                <option value="مكة المكرمة">مكة المكرمة</option>
+                                <option value="المدينة المنورة">المدينة المنورة</option>
+                                <option value="الطائف">الطائف</option>
+                                <option value="تبوك">تبوك</option>
+                                <option value="بريدة">بريدة</option>
+                                <option value="خميس مشيط">خميس مشيط</option>
+                                <option value="حائل">حائل</option>
+                                <option value="الجبيل">الجبيل</option>
+                                <option value="ينبع">ينبع</option>
+                                <option value="الخبر">الخبر</option>
+                                <option value="الأحساء">الأحساء</option>
+                                <option value="القطيف">القطيف</option>
+                                <option value="أبها">أبها</option>
+                                <option value="نجران">نجران</option>
+                                <option value="جازان">جازان</option>
+                                <option value="عرعر">عرعر</option>
+                                <option value="سكاكا">سكاكا</option>
+                                <option value="القريات">القريات</option>
+                                <option value="الباحة">الباحة</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">العنوان التفصيلي *</label>
+                            <textarea id="address" required rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="الحي، الشارع، رقم المبنى..."></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-2">الكمية والسعر *</label>
+                            <select id="quantitySelect" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                <option value="">اختر الكمية</option>
+                                <option value="1|129|0">قطعة واحدة - 129 ريال</option>
+                                <option value="2|189|69">قطعتان - 189 ريال (وفر 69 ريال)</option>
+                                <option value="3|239|148">3 قطع - 239 ريال (وفر 148 ريال)</option>
+                                <option value="4|299|217">4 قطع - 299 ريال (وفر 217 ريال)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-xl">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-gray-800 mb-2">المجموع</div>
+                                <div id="totalPrice" class="text-4xl font-bold text-green-600">0 ريال</div>
+                                <div id="savingsAmount" class="text-lg text-blue-600 mt-2"></div>
+								<br>
+								<div class="text-sm text-green-600 font-semibold">شامل التوصيل لجميع مناطق المملكة🚚</div>
+                            <div class="text-xs text-green-500 mt-1">دفع عند الاستلام متاح</div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-8 rounded-xl text-xl font-bold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg">
+                            <span id="submitText">تأكيد الطلب الآن 🚀</span>
+                            <div id="loadingSpinner" class="hidden flex items-center justify-center">
+                                <div class="spinner ml-3"></div>
+                                جاري إرسال الطلب...
+                            </div>
+                        </button>
+						
+						<div class="text-center space-y-2 mt-4">
+                            <div class="text-xs text-gray-500">
+                                ✅ دفع عند الاستلام | ✅ اختبر الجودة بنفسك
+                            </div>
+                            <div class="text-xs text-green-600 font-semibold">
+                                🔒 معلوماتك محمية ومؤمنة 🔒 
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Success Page -->
+                <div id="successPage" class="success-page p-8 rounded-2xl shadow-2xl text-white text-center">
+                    <div class="text-6xl mb-6">✅</div>
+                    <h2 class="text-3xl font-bold mb-4">تم استلام طلبك بنجاح!</h2>
+                    <p class="text-xl mb-6">شكراً لك على الطلب. سيتم التواصل معك خلال 24 ساعة لتأكيد الطلب وترتيب التوصيل.</p>
+                    <div class="bg-white bg-opacity-20 p-4 rounded-lg mb-6">
+                        <p class="text-lg">رقم الطلب: <span id="orderNumber" class="font-bold"></span></p>
+                    </div>
+                    <button onclick="location.reload()" class="bg-white text-green-600 px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-all duration-300">
+                        طلب جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Gallery Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeVideoModal()">&times;</span>
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white mb-4">شاهد المنتج يعمل</h2>
+            </div>
+            
+            <div id="videoContainer" class="aspect-video bg-black rounded-lg overflow-hidden">
+                <!-- سيتم إضافة الفيديو هنا ديناميكيًا -->
+            </div>
+            
+            <div class="text-center mt-6">
+                <p class="text-white text-sm">شاهد كيف تقوم قطاعة الخضروات بتقطيع مختلف أنواع الخضار بسهولة وسرعة</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Player Modal -->
+    <div id="playerModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePlayerModal()">&times;</span>
+            <div id="youtubePlayer" class="aspect-video bg-black rounded-lg overflow-hidden">
+                <!-- سيتم إضافة مشغل YouTube هنا -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeImageModal()">&times;</span>
+            <img id="modalImage" src="" alt="صورة المنتج" class="w-full max-h-96 object-contain rounded-lg">
+        </div>
+    </div>
+
+    <!-- Footer -->
+   
+
+    <!-- Font Awesome for icons -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const quantitySelect = document.getElementById('quantitySelect');
+    const totalPriceDisplay = document.getElementById('totalPrice');
+    const savingsAmountDisplay = document.getElementById('savingsAmount');
+    const form = document.getElementById('productOrderForm');
+    const orderForm = document.getElementById('orderForm');
+    const successPage = document.getElementById('successPage');
+    const submitButton = document.querySelector('button[type="submit"]');
+    const submitText = document.getElementById('submitText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    // تحديث السعر الكلي والتوفير
+    function updateTotalPrice() {
+        const selectedOption = quantitySelect.value;
+        if (selectedOption) {
+            const [quantity, price, savings] = selectedOption.split('|');
+            totalPriceDisplay.textContent = `${price} ريال`;
+            if (parseInt(savings) > 0) {
+                savingsAmountDisplay.textContent = `توفير ${savings} ريال!`;
+                savingsAmountDisplay.style.display = 'block';
+            } else {
+                savingsAmountDisplay.style.display = 'none';
+            }
+        } else {
+            totalPriceDisplay.textContent = '0 ريال';
+            savingsAmountDisplay.style.display = 'none';
+        }
+    }
+
+    quantitySelect.addEventListener('change', updateTotalPrice);
+    updateTotalPrice(); // استدعاء أولي عند تحميل الصفحة
+
+    // إرسال الطلب
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const selectedOption = quantitySelect.value;
+        if (!selectedOption) {
+            alert('يرجى اختيار الكمية');
+            return;
+        }
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const region = document.getElementById('region').value;
+        const address = document.getElementById('address').value.trim();
+
+        if (!fullName || !phone || !region || !address) {
+            alert('يرجى ملء جميع الحقول المطلوبة');
+            return;
+        }
+
+        // تفعيل حالة التحميل وتعطيل زر الإرسال
+        submitButton.disabled = true;
+        submitText.style.display = 'none';
+        loadingSpinner.classList.remove('hidden');
+        loadingSpinner.classList.add('flex');
+
+        const [quantity, unitPrice, savings] = selectedOption.split('|');
+        const totalPrice = parseInt(unitPrice);
+        const orderNumber = 'ORD-' + Date.now();
+        const orderDate = new Date().toLocaleString('ar-SA');
+
+        const orderData = {
+            timestamp: orderDate,
+            orderNumber: orderNumber,
+            fullName: fullName,
+            phone: phone,
+            email: email || 'غير محدد',
+            region: region,
+            address: address,
+            product: 'قطاعة خضروات يدوية',
+            quantity: parseInt(quantity),
+            unitPrice: parseInt(unitPrice),
+            totalPrice: totalPrice,
+            savings: parseInt(savings),
+            shipping: 'مجاني',
+            warranty: '14 يوم',
+            status: 'طلب جديد'
+        };
+
+        const scriptUrl = 'https://script.google.com/macros/s/AKfycbwpK3dz3zrdBHKGEsQ_Dz6QiLyZBUEv_VVZ3pdgeL-AxIi3RsakMbQt_uMElZKSYMG_/exec';
+
+        try {
+            // إرسال البيانات إلى Google Sheets
+            await fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            });
+
+            // حفظ نسخة محلياً
+            localStorage.setItem('lastOrder', JSON.stringify(orderData));
+
+            // إظهار صفحة الشكر وإخفاء الفورم
+            orderForm.style.display = 'none';
+            successPage.style.display = 'block';
+            document.getElementById('orderNumber').textContent = orderNumber;
+
+        } catch (error) {
+            alert('حدث خطأ في إرسال الطلب. يرجى المحاولة مرة أخرى.');
+            console.error('Error:', error);
+        } finally {
+            submitButton.disabled = false;
+            submitText.style.display = 'block';
+            loadingSpinner.classList.add('hidden');
+            loadingSpinner.classList.remove('flex');
+        }
+    });
+
+    // تمرير إلى قسم الطلب
+    window.scrollToOrder = function () {
+        document.getElementById('orderSection').scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // تغيير الصورة الرئيسية
+    window.changeMainImage = function (src) {
+        const mainImage = document.getElementById('mainImage');
+        mainImage.src = src;
+
+        const thumbnails = document.querySelectorAll('.grid img[onclick]');
+        thumbnails.forEach(img => {
+            if (img.src === src) {
+                img.classList.add('border-blue-500');
+                img.classList.add('border-3');
+                img.classList.remove('border-transparent');
+            } else {
+                img.classList.remove('border-blue-500');
+                img.classList.remove('border-3');
+                img.classList.add('border-transparent');
+            }
+        });
+    };
+
+    // فتح معرض الفيديو
+    window.openVideoGallery = function () {
+        const videoModal = document.getElementById('videoModal');
+        const videoContainer = document.getElementById('videoContainer');
+        
+        // إضافة فيديو توضيحي
+        videoContainer.innerHTML = `
+            <video controls autoplay class="w-full h-full">
+                <source src="https://media.taager.com/29496645-6aca-4fa6-99f1-1a83083bdf3e.mp4" type="video/mp4">
+                متصفحك لا يدعم تشغيل الفيديو
+            </video>
+        `;
+        
+        videoModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    };
+
+    // تشغيل فيديو معين
+    window.playVideo = function (type) {
+        const playerModal = document.getElementById('playerModal');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+        
+        let videoId = '';
+        
+        if (type === 'carrot') {
+            videoId = 'dQw4w9WgXcQ'; // استبدل بمعرف فيديو YouTube الحقيقي
+        } else if (type === 'zucchini') {
+            videoId = 'dQw4w9WgXcQ'; // استبدل بمعرف فيديو YouTube الحقيقي
+        }
+        
+        youtubePlayer.innerHTML = `
+            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen></iframe>
+        `;
+        
+        playerModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    };
+
+    // إغلاق معرض الفيديو
+    window.closeVideoModal = function () {
+        const videoModal = document.getElementById('videoModal');
+        const videoContainer = document.getElementById('videoContainer');
+        
+        videoContainer.innerHTML = '';
+        videoModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    // إغلاق مشغل الفيديو
+    window.closePlayerModal = function () {
+        const playerModal = document.getElementById('playerModal');
+        const youtubePlayer = document.getElementById('youtubePlayer');
+        
+        youtubePlayer.innerHTML = '';
+        playerModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    // فتح وغلق معرض الصور
+    window.openImageModal = function (src) {
+        const imageModal = document.getElementById('imageModal');
+        document.getElementById('modalImage').src = src;
+        imageModal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeImageModal = function () {
+        const imageModal = document.getElementById('imageModal');
+        imageModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    };
+
+    // إغلاق المودالات عند الضغط خارجها
+    window.onclick = function (event) {
+        const videoModal = document.getElementById('videoModal');
+        const playerModal = document.getElementById('playerModal');
+        const imageModal = document.getElementById('imageModal');
+
+        if (event.target === videoModal) closeVideoModal();
+        if (event.target === playerModal) closePlayerModal();
+        if (event.target === imageModal) closeImageModal();
+    };
+});
+</script>
+</body>
+</html>
